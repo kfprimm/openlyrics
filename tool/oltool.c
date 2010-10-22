@@ -64,7 +64,7 @@ int main(int argc, char *argv[])
 {
 	const char *filename = argv[1];//"./tests/songs/Amazing Grace.xml";
 	//const char *filename = "./example_complex.xml";
-	OLSong *song = ol_new_song();
+	OLSong *song = ol_song_new();
 	
 	OL_ERROR err;
 	if (!(err=ol_song_parse_from_file(song,filename)))

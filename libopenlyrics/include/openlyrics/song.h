@@ -2,6 +2,8 @@
 #ifndef OPENLYRICS_SONG_H
 #define OPENLYRICS_SONG_H
 
+#include <openlyrics/data.h>
+
 #ifndef NULL
 	#define NULL 0
 #endif
@@ -14,53 +16,6 @@ typedef enum tagOL_ERROR
 	OL_ERROR_ROOT,
 	OL_ERROR_VERSION
 } OL_ERROR;
-
-typedef enum tagOL_AUTHOR_TYPE
-{
-	OL_AUTHOR_INVALID,
-	OL_AUTHOR_WORDS,
-	OL_AUTHOR_MUSIC,
-	OL_AUTHOR_TRANSLATION
-} OL_AUTHOR_TYPE;
-
-typedef enum tagOL_TEMPO_TYPE
-{
-	OL_TEMPO_INVALID,
-	OL_TEMPO_BPM,
-	OL_TEMPO_TEXT
-} OL_TEMPO_TYPE;
-
-typedef struct tagOLTitle
-{
-	char *title;
-	char *lang;
-} OLTitle;
-
-typedef struct tagOLAuthor
-{
-	char *name;
-	OL_AUTHOR_TYPE type;
-	char *lang;
-} OLAuthor;
-
-typedef struct tagOLSongbook
-{
-	char *name;
-	char *entry;
-	char *lang;
-} OLSongbook;
-
-typedef struct tagOLTheme
-{
-	char *name;
-	int id;
-	char *lang;
-} OLTheme;
-
-typedef struct tagOLVerse
-{
-	
-} OLVerse;
 
 typedef struct tagOLSong
 {
@@ -103,7 +58,8 @@ typedef struct tagOLSong
 
 const char *ol_error_str(OL_ERROR error);
 
-OLSong *ol_new_song();
+OLSong *ol_song_new();
+void ol_song_free(OLSong *song);
 
 const char *ol_song_get_createdin	(OLSong *song);
 void ol_song_set_createdin			(OLSong *song, const char *createdin);
@@ -114,13 +70,15 @@ void ol_song_set_modifiedin			(OLSong *song, const char *modifiedin);
 const char *ol_song_get_modifieddate	(OLSong *song);
 void ol_song_set_modifieddate			(OLSong *song, const char *modifieddate);
 
-int ol_song_num_titles	(OLSong *song);
-void ol_song_get_title	(OLSong *song, int index, char **title, char **lang);
-void ol_song_add_title	(OLSong *song, const char *title, const char *lang);
+int ol_song_num_titles	     (OLSong *song);
+OLTitle **ol_song_get_titles (OLSong *song);
+void ol_song_get_title	     (OLSong *song, int index, char **title, char **lang);
+void ol_song_add_title	     (OLSong *song, const char *title, const char *lang);
 
-int ol_song_num_authors	(OLSong *song);
-void ol_song_get_author	(OLSong *song, int index, char **name, OL_AUTHOR_TYPE *type, char **lang);
-void ol_song_add_author	(OLSong *song, const char *author,OL_AUTHOR_TYPE type, const char *lang);
+int ol_song_num_authors	       (OLSong *song);
+OLAuthor **ol_song_get_authors (OLSong *song);
+void ol_song_get_author	       (OLSong *song, int index, char **name, OL_AUTHOR_TYPE *type, char **lang);
+void ol_song_add_author	       (OLSong *song, const char *author,OL_AUTHOR_TYPE type, const char *lang);
 
 const char *ol_song_get_copyright	(OLSong *song);
 void ol_song_set_copyright			(OLSong *song, const char *copyright);
@@ -153,6 +111,7 @@ const char *ol_song_get_custom_version	(OLSong *song);
 void ol_song_set_custom_version			(OLSong *song, const char *version);
 
 int ol_song_get_num_keywords	(OLSong *song);
+const char **ol_song_get_keywords(OLSong *song);
 const char *ol_song_get_keyword	(OLSong *song, int index);
 void ol_song_add_keyword		(OLSong *song, const char *keyword);
 
@@ -161,12 +120,13 @@ const int *ol_song_get_verse_order	(OLSong *song);
 const int *ol_song_set_verse_order	(OLSong *song, const int *order);
 
 int ol_song_num_songbooks	(OLSong *song);
+OLSongbook **ol_song_get_songbooks (OLSong *song);
 void ol_song_get_songbook	(OLSong *song, int index, char **name, char **entry, char **lang);
 void ol_song_add_songbook	(OLSong *song, const char *name, const char *entry, const char *lang);
 
 int ol_song_num_themes	(OLSong *song);
+OLTheme **ol_song_get_themes (OLSong *song);
 void ol_song_get_theme	(OLSong *song, int index, char **name, int *id, char **lang);
 void ol_song_add_theme	(OLSong *song, const char *name, int id, const char *lang);
-
 
 #endif

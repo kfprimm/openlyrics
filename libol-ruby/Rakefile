@@ -1,0 +1,15 @@
+# Rakefile
+require 'rubygems'
+require 'rake'
+require 'echoe'
+
+Echoe.new('openlyrics', '0.7.0') do |p|
+  p.description    = "Ruby bindings for libopenlyrics."
+  p.url            = "http://github.com/kfprimm/openlyrics"
+  p.author         = "Kevin Primm"
+  p.email          = "kfprimm@system87.com"
+  p.ignore_pattern = ["tmp/*", "script/*"]
+  p.development_dependencies = []
+end
+
+Dir["#{File.dirname(__FILE__)}/tasks/*.rake"].sort.each { |ext| load ext }
