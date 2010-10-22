@@ -4,17 +4,17 @@
 
 typedef enum tagOL_AUTHOR_TYPE
 {
-	OL_AUTHOR_INVALID,
-	OL_AUTHOR_WORDS,
-	OL_AUTHOR_MUSIC,
-	OL_AUTHOR_TRANSLATION
+  OL_AUTHOR_INVALID,
+  OL_AUTHOR_WORDS,
+  OL_AUTHOR_MUSIC,
+  OL_AUTHOR_TRANSLATION
 } OL_AUTHOR_TYPE;
 
 typedef enum tagOL_TEMPO_TYPE
 {
-	OL_TEMPO_INVALID,
-	OL_TEMPO_BPM,
-	OL_TEMPO_TEXT
+  OL_TEMPO_INVALID,
+  OL_TEMPO_BPM,
+  OL_TEMPO_TEXT
 } OL_TEMPO_TYPE;
 
 typedef struct tagOLData
@@ -22,33 +22,41 @@ typedef struct tagOLData
   char *name, *lang;
 } OLData;
 
-typedef struct tagOLTitle
+typedef struct tagOLTitle 
 {
-	char *name, *lang;
-} OLTitle;
+  char *name, *lang;
+} OLTitle; 
 
 typedef struct tagOLAuthor
 {
-	char *name, *lang;
-	OL_AUTHOR_TYPE type;
-	
+  char *name, *lang;
+  OL_AUTHOR_TYPE type;
+  
 } OLAuthor;
 
 typedef struct tagOLSongbook
 {
-	char *name, *lang;
-	char *entry;
+  char *name, *lang;
+  char *entry;
 } OLSongbook;
 
 typedef struct tagOLTheme
 {
-	char *name, *lang;
-	int id;	
+  char *name, *lang;
+  int id;  
 } OLTheme;
+
+typedef struct tagOLLine
+{
+  char *name, *lang;
+  char *part;
+} OLLine;
 
 typedef struct tagOLVerse
 {
-	
+  char *name, *lang;
+  OLLine **lines;
+  int num_lines;
 } OLVerse;
 
 void ol_data_get (OLData *data, char **name, char **lang);
@@ -77,5 +85,19 @@ void     ol_theme_free (OLTheme *theme);
 OLTheme *ol_theme_copy (OLTheme *theme);
 void     ol_theme_get  (OLTheme *theme, char **name, int *id, char **lang);
 void     ol_theme_set  (OLTheme *theme, const char *name, int id, const char *lang);
+
+OLLine *ol_line_new  (const char *name, const char *part, const char *lang);
+void    ol_line_free (OLLine *line);
+OLLine *ol_line_copy (OLLine *line);
+void    ol_line_get  (OLLine *line, char **name, char **part, char **lang);
+void    ol_line_set  (OLLine *line, const char *name, const char *part, const char *lang);
+
+OLVerse *ol_verse_new  (const char *name, const char *lang);
+void     ol_verse_free (OLVerse *verse);
+OLVerse *ol_verse_copy (OLVerse *verse);
+int      ol_verse_num_lines (OLVerse *verse);
+OLLine **ol_verse_get_lines (OLVerse *verse);
+void ol_verse_get_line(OLVerse *verse, int index, char **name, char **part, char **lang);
+void ol_verse_add_line (OLVerse *verse, int index, const char *name, const char *part, const char *lang);
 
 #endif

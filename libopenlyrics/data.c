@@ -12,13 +12,13 @@ void ol_data_get (OLData *data, char **name, char **lang)
 }
 void ol_data_set (OLData *data, const char *name, const char *lang)
 {
-  ol_set_string(&data->name, name);
-  ol_set_string(&data->lang, lang);
+  ol_string_set(&data->name, name);
+  ol_string_set(&data->lang, lang);
 }
 
 OLTitle *ol_title_new(const char *name, const char *lang) 
 { 
-  OLTitle *title = ol_new_object(sizeof(OLTitle));
+  OLTitle *title = ol_object_new(sizeof(OLTitle));
   ol_title_set(title, name, lang);
   return title;
 }
@@ -29,7 +29,7 @@ OLTitle *ol_title_copy(OLTitle *title) { return ol_title_new(title->name,title->
 
 OLAuthor *ol_author_new(const char *name, OL_AUTHOR_TYPE type, const char *lang)
 {
-  OLAuthor *author = ol_new_object(sizeof(OLAuthor));
+  OLAuthor *author = ol_object_new(sizeof(OLAuthor));
   ol_author_set(author, name, type, lang);
   return author;
 }
@@ -51,7 +51,7 @@ void ol_author_set_type(OLAuthor *author, OL_AUTHOR_TYPE type) { author->type = 
 
 OLSongbook *ol_songbook_new(const char *name, const char *entry, const char *lang)
 {
-  OLSongbook *songbook = ol_new_object(sizeof(OLSongbook));
+  OLSongbook *songbook = ol_object_new(sizeof(OLSongbook));
   ol_songbook_set(songbook, name, entry, lang);
   return songbook;
 }
@@ -65,12 +65,12 @@ void        ol_songbook_get  (OLSongbook *songbook, char **name, char **entry, c
 void        ol_songbook_set  (OLSongbook *songbook, const char *name, const char *entry, const char *lang)
 {
   ol_data_set((OLData*)songbook, name, lang);
-  ol_set_string(&songbook->entry, entry);
+  ol_string_set(&songbook->entry, entry);
 }
 
 OLTheme *ol_theme_new(const char *name, int id, const char *lang)
 {
-  OLTheme *theme = ol_new_object(sizeof(OLTheme));
+  OLTheme *theme = ol_object_new(sizeof(OLTheme));
   ol_theme_set(theme, name, id, lang);
   return theme;
 }
@@ -86,5 +86,48 @@ void     ol_theme_set  (OLTheme *theme, const char *name, int id, const char *la
   ol_data_set((OLData*)theme, name, lang);
   theme->id = id;
 }
+
+OLLine *ol_line_new  (const char *name, const char *part, const char *lang)
+{
+  OLLine *line = ol_object_new(sizeof(OLLine));
+  ol_line_set(line, name, part, lang);
+  return line;
+}
+void    ol_line_free (OLLine *line) { OL_DATA_FREE(line);free(line->part);free(line); }
+OLLine *ol_line_copy (OLLine *line) { return ol_line_new(line->name, line->part, line->lang); }
+void    ol_line_get  (OLLine *line, char **name, char **part, char **lang)
+{
+  ol_data_get((OLData*)line, name, lang);
+  (*part) = line->part;
+}
+void    ol_line_set  (OLLine *line, const char *name, const char *part, const char *lang)
+{
+  ol_data_set((OLData*)line, name, lang);
+  ol_string_set(&line->part, part);
+}
+
+OLVerse *ol_verse_new  (const char *name, const char *lang)
+{
+  OLVerse *verse = ol_object_new(sizeof(OLVerse));
+  ol_data_set((OLData*)verse, name, lang);
+  return verse;
+}
+void     ol_verse_free      (OLVerse *verse)
+{
+  OL_DATA_FREE(verse);
+  ol_free_array(verse->lines,ol_verse_num_lines(verse),ol_line_free);
+  free(verse);
+}
+OLVerse *ol_verse_copy      (OLVerse *verse)
+{
+  OLVerse *new_verse = ol_verse_new(verse->name, verse->lang);
+  new_verse->lines = ol_copy_array(verse->lines,ol_verse_num_lines(verse),ol_line_copy);
+  return new_verse;
+}
+int      ol_verse_num_lines (OLVerse *verse) { return verse->num_lines; }
+OLLine **ol_verse_get_lines (OLVerse *verse) { return verse->lines; }
+void ol_verse_get_line      (OLVerse *verse, int index, char **name, char **part, char **lang) { ol_line_get(verse->lines[index], name, part, lang); }
+void ol_verse_add_line (OLVerse *verse, int index, const char *name, const char *part, const char *lang)
+ { ol_array_add_elem((void**)&verse->lines,&verse->num_lines,ol_line_new(name, part, lang)); }
 
 

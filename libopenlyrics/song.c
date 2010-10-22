@@ -164,9 +164,5 @@ void ol_song_add_songbook  (OLSong *song, const char *name, const char *entry, c
 int ol_song_num_themes  (OLSong *song) { return song->num_themes; }
 OLTheme **ol_song_get_themes (OLSong *song) { return song->themes; }
 void ol_song_get_theme  (OLSong *song, int index, char **name, int *id, char **lang) { ol_theme_get(song->themes[index], name, id, lang); }
-void ol_song_add_theme  (OLSong *song, const char *name, int id, const char *lang)
-{
-  ol_extend_ptr_array((void**)&song->themes,&song->num_themes,1);
-  song->themes[song->num_themes-1]=ol_theme_new(name, id, lang);
-}
+void ol_song_add_theme  (OLSong *song, const char *name, int id, const char *lang) { ol_array_add(&song->themes,song->num_themes,ol_theme_new(name, id, lang)); }
 

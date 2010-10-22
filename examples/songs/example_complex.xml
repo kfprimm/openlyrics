@@ -54,13 +54,13 @@
 
   <lyrics>
 
-    <verse name="intro" xml:lang="en">
+    <verse name="intro" lang="en">
       <lines>
         <line>This is intro of a song.</line>
       </lines>
     </verse>
 
-    <verse name="v1" xml:lang="en-US">
+    <verse name="v1" lang="en-US">
       <lines part="men">
         <comment>any text</comment>
         <line>Amazing grace how sweet the sound that saved a wretch like me;</line>
@@ -74,7 +74,7 @@
       </lines>
     </verse>
 
-    <verse name="v1" xml:lang="de">
+    <verse name="v1" lang="de">
       <lines>
         <line><chord name="B"/>Erstaunliche Ahmut, wie</line>
       </lines>
