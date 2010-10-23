@@ -22,7 +22,7 @@ OLTitle *ol_title_new(const char *name, const char *lang)
   ol_title_set(title, name, lang);
   return title;
 }
-void ol_title_free(OLTitle *title) { OL_DATA_FREE(title);free(title); }
+void ol_title_free(OLTitle *title) {}// OL_DATA_FREE(title);free(title); }
 void ol_title_get(OLTitle *title, char **name, char **lang) { ol_data_get((OLData*)title,name,lang); }
 void ol_title_set(OLTitle *title, const char *name, const char *lang) { ol_data_set((OLData*)title, name, lang); }
 OLTitle *ol_title_copy(OLTitle *title) { return ol_title_new(title->name,title->lang); }
@@ -33,7 +33,7 @@ OLAuthor *ol_author_new(const char *name, OL_AUTHOR_TYPE type, const char *lang)
   ol_author_set(author, name, type, lang);
   return author;
 }
-void ol_author_free(OLAuthor *author) { OL_DATA_FREE(author);free(author); }
+void ol_author_free(OLAuthor *author) {}// OL_DATA_FREE(author);free(author); }
 void ol_author_get(OLAuthor *author, char **name, char **lang, OL_AUTHOR_TYPE *type)
 {
   ol_data_get((OLData*)author, name, lang);
@@ -55,7 +55,7 @@ OLSongbook *ol_songbook_new(const char *name, const char *entry, const char *lan
   ol_songbook_set(songbook, name, entry, lang);
   return songbook;
 }
-void        ol_songbook_free (OLSongbook *songbook) { OL_DATA_FREE(songbook);free(songbook->entry);free(songbook); }
+void        ol_songbook_free (OLSongbook *songbook) {}// OL_DATA_FREE(songbook);free(songbook->entry);free(songbook); }
 OLSongbook *ol_songbook_copy (OLSongbook *songbook) { return ol_songbook_new(songbook->name, songbook->entry, songbook->lang); }
 void        ol_songbook_get  (OLSongbook *songbook, char **name, char **entry, char **lang)
 {
@@ -74,7 +74,7 @@ OLTheme *ol_theme_new(const char *name, int id, const char *lang)
   ol_theme_set(theme, name, id, lang);
   return theme;
 }
-void ol_theme_free(OLTheme *theme) { OL_DATA_FREE(theme);free(theme); }
+void ol_theme_free(OLTheme *theme) {}// OL_DATA_FREE(theme);free(theme); }
 OLTheme *ol_theme_copy (OLTheme *theme) { return ol_theme_new(theme->name, theme->id, theme->lang); }
 void     ol_theme_get  (OLTheme *theme, char **name, int *id, char **lang)
 {
@@ -93,7 +93,7 @@ OLLine *ol_line_new  (const char *name, const char *part, const char *lang)
   ol_line_set(line, name, part, lang);
   return line;
 }
-void    ol_line_free (OLLine *line) { OL_DATA_FREE(line);free(line->part);free(line); }
+void    ol_line_free (OLLine *line) {}// OL_DATA_FREE(line);free(line->part);free(line); }
 OLLine *ol_line_copy (OLLine *line) { return ol_line_new(line->name, line->part, line->lang); }
 void    ol_line_get  (OLLine *line, char **name, char **part, char **lang)
 {
@@ -112,12 +112,12 @@ OLVerse *ol_verse_new  (const char *name, const char *lang)
   ol_data_set((OLData*)verse, name, lang);
   return verse;
 }
-void     ol_verse_free      (OLVerse *verse)
-{
+void     ol_verse_free      (OLVerse *verse) {}
+/*{
   OL_DATA_FREE(verse);
   ol_array_free(verse->lines,ol_verse_num_lines(verse),ol_line_free);
   free(verse);
-}
+}*/
 OLVerse *ol_verse_copy      (OLVerse *verse)
 {
   OLVerse *new_verse = ol_verse_new(verse->name, verse->lang);

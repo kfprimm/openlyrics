@@ -4,9 +4,17 @@
 
 #include <string.h>
 
+#define OL_DEBUG
+
+#ifdef OL_DEBUG
+  #define OL_DEBUG_LOG(message) printf("DEBUG: %s\n",message)
+#else
+  #define OL_DEBUG_LOG
+#endif
+
 typedef void** OLArray;
 
-typedef void (*ol_free_func)(void*);
+typedef void  (*ol_free_func)(void*);
 typedef void* (*ol_copy_func)(void*);
 
 void  ol_string_set(char **stringptr, const char *newstring);

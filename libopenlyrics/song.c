@@ -19,8 +19,8 @@ const char *ol_error_str(OL_ERROR error)
 }
 
 OLSong *ol_song_new() { return ol_object_new(sizeof(OLSong)); }
-void ol_song_free(OLSong *song)
-{
+void ol_song_free(OLSong *song) {}
+/*{
   free(song->createdIn);
 	free(song->modifiedIn);
 	free(song->modifiedDate);
@@ -55,15 +55,15 @@ void ol_song_free(OLSong *song)
 	  ol_theme_free(song->themes[i]);
 	free(song->themes);	
   
-  /*		
+
 	int *verseOrder;
 	int num_verse_order;	
 	
 	OLVerse **verses;
 	int num_verses;
-  */
+  
   free(song);
-}
+}*/
 
 const char *ol_song_get_createdin  (OLSong *song) { return song->createdIn; }
 void ol_song_set_createdin      (OLSong *song, const char *createdin) { ol_string_set(&song->createdIn,createdin); }
@@ -77,7 +77,7 @@ void ol_song_set_modifieddate      (OLSong *song, const char *modifieddate) { ol
 OLTitle **ol_song_get_titles (OLSong *song) { return song->titles; }
 int ol_song_num_titles  (OLSong *song) { return song->num_titles; }
 void ol_song_get_title  (OLSong *song, int index, char **title, char **lang) { ol_title_get(song->titles[index], title, lang); }
-void ol_song_add_title  (OLSong *song, const char *title, const char *lang) { ol_array_add_elem((void**)&song->titles,&song->num_titles,ol_title_new(title, lang)); }
+void ol_song_add_title  (OLSong *song, const char *title, const char *lang) { ol_array_add_elem(&song->titles,&song->num_titles,ol_title_new(title, lang)); }
 
 int ol_song_num_authors  (OLSong *song) { return song->num_authors; }
 OLAuthor **ol_song_get_authors (OLSong *song) { return song->authors; }
@@ -148,5 +148,5 @@ void ol_song_add_songbook  (OLSong *song, const char *name, const char *entry, c
 int ol_song_num_themes  (OLSong *song) { return song->num_themes; }
 OLTheme **ol_song_get_themes (OLSong *song) { return song->themes; }
 void ol_song_get_theme  (OLSong *song, int index, char **name, int *id, char **lang) { ol_theme_get(song->themes[index], name, id, lang); }
-void ol_song_add_theme  (OLSong *song, const char *name, int id, const char *lang) { ol_array_add_elem(&song->themes,song->num_themes,ol_theme_new(name, id, lang)); }
+void ol_song_add_theme  (OLSong *song, const char *name, int id, const char *lang) { ol_array_add_elem(&song->themes,&song->num_themes,ol_theme_new(name, id, lang)); }
 

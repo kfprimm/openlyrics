@@ -1,12 +1,14 @@
 #!/usr/bin/ruby -rubygems
 
+# Ruby implementation of the 'oltool' utility.
+
 require 'openlyrics'
 
 def dump_file(filename)
   song = OL::Song.new(filename)
   
   return if OL::Error.get
-
+  
   titles    = song.titles
   authors   = song.authors
   keywords  = song.keywords

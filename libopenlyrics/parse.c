@@ -26,9 +26,8 @@ void ol_song_parse_title(OLSong *song,xmlDocPtr doc,xmlNodePtr node)
 {
   xmlChar *title = xmlNodeListGetString(doc,node->xmlChildrenNode,1);
   xmlChar *lang = xmlGetProp(node,"lang");
-  
+  OL_DEBUG_LOG(title);
   ol_song_add_title(song,title,lang);
-  
   xmlFree(title);xmlFree(lang);
 }
 
@@ -37,6 +36,8 @@ void ol_song_parse_author(OLSong *song,xmlDocPtr doc,xmlNodePtr node)
   xmlChar *name = xmlNodeListGetString(doc,node->xmlChildrenNode,1);
   xmlChar *typestr = xmlGetProp(node,"type");
   xmlChar *lang = xmlGetProp(node,"lang");
+  
+  OL_DEBUG_LOG(name);
   
   OL_AUTHOR_TYPE type = OL_AUTHOR_INVALID;
   if (seql(typestr,"words"))
@@ -56,6 +57,8 @@ void ol_song_parse_tempo(OLSong *song,xmlDocPtr doc,xmlNodePtr node)
   xmlChar *text = xmlNodeListGetString(doc,node->xmlChildrenNode,1);
   xmlChar *typestr = xmlGetProp(node,"type");
   
+  OL_DEBUG_LOG(text);
+  
   if (seql(typestr,"bpm"))
     ol_song_set_tempo_bpm(song,atoi(text));
   else
@@ -70,6 +73,8 @@ void ol_song_parse_songbook(OLSong *song,xmlDocPtr doc,xmlNodePtr node)
   xmlChar *entry = xmlGetProp(node,"entry");
   xmlChar *lang = xmlGetProp(node,"lang");
   
+  OL_DEBUG_LOG(name);
+  
   ol_song_add_songbook(song,name,entry,lang);
   
   xmlFree(name);xmlFree(entry);xmlFree(lang);
@@ -80,6 +85,8 @@ void ol_song_parse_theme(OLSong *song,xmlDocPtr doc,xmlNodePtr node)
   xmlChar *name = xmlNodeListGetString(doc,node->xmlChildrenNode,1);
   xmlChar *idstr = xmlGetProp(node,"id");
   xmlChar *lang = xmlGetProp(node,"lang");
+  
+  OL_DEBUG_LOG(name);
   
   int id=0;
   if (idstr)
@@ -105,6 +112,7 @@ void ol_song_parse_lines(OLSong *song,xmlDocPtr doc,xmlNodePtr linesnode,OLVerse
 void ol_song_parse_string(OLSong *song,xmlDocPtr doc,xmlNodePtr node,ol_string_parser func)
 {
   xmlChar *text = xmlNodeListGetString(doc,node->xmlChildrenNode,1);
+  OL_DEBUG_LOG(text);
   func(song,text);
   xmlFree(text);
 }
@@ -121,7 +129,7 @@ void ol_song_parse_vlist(OLSong *song,xmlDocPtr doc,xmlNodePtr node,char delim,o
   xmlChar *string = xmlNodeListGetString(doc,node->xmlChildrenNode,1);
   int i,start=0;
   char tmp[1000];
-
+  
   for (i=0;i<strlen(string);i=i+1)
   {
     if (string[i]==delim)
@@ -132,20 +140,18 @@ void ol_song_parse_vlist(OLSong *song,xmlDocPtr doc,xmlNodePtr node,char delim,o
       start=i+1;
     }      
   }
+  
   if (start<strlen(string)-1)
   {
     memset(&tmp[0],0,sizeof(tmp));
     memcpy(&tmp[0],&string[start],strlen(string)-start);
-    ol_song_add_keyword(song,&tmp[0]);
+    func(song,&tmp[0]);
   }
   
   xmlFree(string);
 }
 
-void ol_song_parse_keyword(OLSong *song,const char *keyword)
-{
-  ol_song_add_keyword(song,keyword);
-}
+void ol_song_parse_keyword(OLSong *song,const char *keyword) { ol_song_add_keyword(song,keyword); }
 
 OL_ERROR ol_song_parse_from_file(OLSong *song,const char *uri)
 {
@@ -179,7 +185,7 @@ OL_ERROR ol_song_parse_from_file(OLSong *song,const char *uri)
           while (node)
           {
             if (seql(node->name,"titles"))
-              ol_song_parse_node(song,doc,node,"title",ol_song_parse_title); 
+              ol_song_parse_node(song,doc,node,"title",ol_song_parse_title);
             else if (seql(node->name,"authors"))
               ol_song_parse_node(song,doc,node,"author",ol_song_parse_author); 
             else if (seql(node->name,"copyright"))
@@ -209,7 +215,7 @@ OL_ERROR ol_song_parse_from_file(OLSong *song,const char *uri)
             node=node->next;
           }          
         }
-        if (seql(topnode->name,"lyrics"))
+        /*else if (seql(topnode->name,"lyrics"))
         {
           xmlNodePtr node=topnode->xmlChildrenNode;
           while (node)
@@ -230,7 +236,7 @@ OL_ERROR ol_song_parse_from_file(OLSong *song,const char *uri)
             }
             node=node->next;
           }          
-        }
+        }*/
         topnode=topnode->next;
       }    
     }

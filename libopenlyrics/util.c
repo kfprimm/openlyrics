@@ -44,17 +44,17 @@ OLArray ol_array_copy(OLArray array, int size, ol_copy_func func)
 
 void ol_array_extend(OLArray *array,int *size,int add)
 {
-  void *newptrs=ol_array_new(*size+add);
-  memcpy(newptrs,(*array),(*size)*4);
+  void *newptrs=ol_array_new((*size)+add);
+  memcpy(newptrs,(*array),(*size)*sizeof(void*));
   (*size) = (*size) + 1;
-  free((*array));
+  free( (*array) );
   (*array) = newptrs;
 }
 
 void ol_array_add_elem(OLArray *array,int *size, void *elem)
 {
-  ol_array_extend(array,&size,1);
-  array[*size-1]=elem;
+  ol_array_extend(array,size,1);
+  (*array)[(*size)-1]=elem;
 }
 
 const char *ol_lang_get_c(const char *lang, int offset)
