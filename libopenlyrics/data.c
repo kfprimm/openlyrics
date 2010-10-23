@@ -115,13 +115,13 @@ OLVerse *ol_verse_new  (const char *name, const char *lang)
 void     ol_verse_free      (OLVerse *verse)
 {
   OL_DATA_FREE(verse);
-  ol_free_array(verse->lines,ol_verse_num_lines(verse),ol_line_free);
+  ol_array_free(verse->lines,ol_verse_num_lines(verse),ol_line_free);
   free(verse);
 }
 OLVerse *ol_verse_copy      (OLVerse *verse)
 {
   OLVerse *new_verse = ol_verse_new(verse->name, verse->lang);
-  new_verse->lines = ol_copy_array(verse->lines,ol_verse_num_lines(verse),ol_line_copy);
+  new_verse->lines = ol_array_copy(verse->lines,ol_verse_num_lines(verse),ol_line_copy);
   return new_verse;
 }
 int      ol_verse_num_lines (OLVerse *verse) { return verse->num_lines; }
