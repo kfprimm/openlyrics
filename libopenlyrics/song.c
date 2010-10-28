@@ -77,12 +77,12 @@ void ol_song_set_modifieddate      (OLSong *song, const char *modifieddate) { ol
 OLTitle **ol_song_get_titles (OLSong *song) { return song->titles; }
 int ol_song_num_titles  (OLSong *song) { return song->num_titles; }
 void ol_song_get_title  (OLSong *song, int index, char **title, char **lang) { ol_title_get(song->titles[index], title, lang); }
-void ol_song_add_title  (OLSong *song, const char *title, const char *lang) { ol_array_add_elem(&song->titles,&song->num_titles,ol_title_new(title, lang)); }
+void ol_song_add_title  (OLSong *song, const char *title, const char *lang) { ol_array_add_elem((OLArray*)&song->titles,&song->num_titles,ol_title_new(title, lang)); }
 
 int ol_song_num_authors  (OLSong *song) { return song->num_authors; }
 OLAuthor **ol_song_get_authors (OLSong *song) { return song->authors; }
 void ol_song_get_author  (OLSong *song, int index, char **name, OL_AUTHOR_TYPE *type, char **lang) { ol_author_get(song->authors[index], name, type, lang); }
-void ol_song_add_author  (OLSong *song, const char *author, OL_AUTHOR_TYPE type, const char *lang) { ol_array_add_elem((void**)&song->authors,&song->num_authors,ol_author_new(author,type,lang)); }
+void ol_song_add_author  (OLSong *song, const char *author, OL_AUTHOR_TYPE type, const char *lang) { ol_array_add_elem((OLArray*)&song->authors,&song->num_authors,ol_author_new(author,type,lang)); }
 
 const char *ol_song_get_copyright  (OLSong *song) { return song->copyright;}
 void ol_song_set_copyright      (OLSong *song, const char *copyright) { ol_string_set(&song->copyright,copyright); }
@@ -132,9 +132,9 @@ const char *ol_song_get_custom_version  (OLSong *song) { return song->customVers
 void ol_song_set_custom_version      (OLSong *song, const char *version) { ol_string_set(&song->customVersion,version); }
 
 int ol_song_num_keywords  (OLSong *song) { return song->num_keywords; }
-const char **ol_song_get_keywords(OLSong *song) { return song->keywords; }
+const char **ol_song_get_keywords(OLSong *song) { return (const char**)song->keywords; }
 const char *ol_song_get_keyword  (OLSong *song, int index) { return song->keywords[index]; }
-void ol_song_add_keyword    (OLSong *song, const char *keyword) { ol_array_add_elem(&song->keywords,&song->num_keywords,keyword); }
+void ol_song_add_keyword    (OLSong *song, const char *keyword) { ol_array_add_elem((OLArray*)&song->keywords,&song->num_keywords,(void*)keyword); }
 
 int ol_song_get_num_verse_order    (OLSong *song);
 const int *ol_song_get_verse_order  (OLSong *song);
@@ -143,10 +143,19 @@ const int *ol_song_set_verse_order  (OLSong *song, const int *order);
 int ol_song_num_songbooks  (OLSong *song) { return song->num_songbooks; }
 OLSongbook **ol_song_get_songbooks (OLSong *song) { return song->songbooks; }
 void ol_song_get_songbook  (OLSong *song, int index, char **name, char **entry, char **lang) { ol_songbook_get(song->songbooks[index], name, entry, lang); }
-void ol_song_add_songbook  (OLSong *song, const char *name, const char *entry, const char *lang) { ol_array_add_elem(&song->songbooks,&song->num_songbooks,ol_songbook_new(name, entry, lang)); }
+void ol_song_add_songbook  (OLSong *song, const char *name, const char *entry, const char *lang) { ol_array_add_elem((OLArray*)&song->songbooks,&song->num_songbooks,ol_songbook_new(name, entry, lang)); }
 
 int ol_song_num_themes  (OLSong *song) { return song->num_themes; }
 OLTheme **ol_song_get_themes (OLSong *song) { return song->themes; }
 void ol_song_get_theme  (OLSong *song, int index, char **name, int *id, char **lang) { ol_theme_get(song->themes[index], name, id, lang); }
-void ol_song_add_theme  (OLSong *song, const char *name, int id, const char *lang) { ol_array_add_elem(&song->themes,&song->num_themes,ol_theme_new(name, id, lang)); }
+void ol_song_add_theme  (OLSong *song, const char *name, int id, const char *lang) { ol_array_add_elem((OLArray*)&song->themes,&song->num_themes,ol_theme_new(name, id, lang)); }
+
+int ol_song_num_verses (OLSong *song) { return song->num_verses; }
+int ol_song_add_verse (OLSong *song, const char *name, const char *lang) { ol_array_add_elem((OLArray*)&song->verses,&song->num_verses,ol_verse_new(name,lang));return song->num_verses-1; }
+OLVerse **ol_song_get_verses (OLSong *song) { return song->verses; }
+void ol_song_get_verse (OLSong *song, int index, char **name, char **lang) { ol_verse_get(song->verses[index],name,lang); }
+OLVerse *ol_song_get_verse_at(OLSong *song, int index) { return song->verses[index]; }
+int ol_song_verse_num_lines (OLSong *song, int index) { return ol_verse_num_lines(song->verses[index]); }
+void ol_song_verse_add_line (OLSong *song, int index, const char *text, const char *part, const char *lang) { ol_verse_add_line(song->verses[index],text,part,lang); }
+void ol_song_verse_get_line (OLSong *song, int verse_index, int index, char **text, char **part, char **lang) { ol_verse_get_line(song->verses[verse_index],index,text,part,lang); }
 

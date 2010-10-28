@@ -7,13 +7,17 @@ require 'openlyrics'
 def dump_file(filename)
   song = OL::Song.new(filename)
   
-  return if OL::Error.get
+  if OL::Error.get != OL::Error::None
+    puts OL::Error.get_s
+    return
+  end
   
   titles    = song.titles
   authors   = song.authors
   keywords  = song.keywords
   songbooks = song.songbooks
   themes    = song.themes
+  verses    = song.verses
 
   puts "Source:           " + filename
   puts "Created in:       " + song.createdin
@@ -65,6 +69,24 @@ def dump_file(filename)
     print "                  " if theme!=themes[0]
     puts theme.name
   end
+  
+  print "Verse(s):         "
+  puts if verses.count==0
+  verses.each do |verse| 
+    print "                  " if verse!=verses[0]
+    puts verse.name
+    verse.lines.each do |line|
+      print "                    "
+      part = "NON"
+      if line.part == "men"
+        part = "MEN"
+      elsif line.part == "women"
+        part = "WMN"
+      end
+      puts "(" + part + ") " + line.name    
+    end
+  end
 end
 
 dump_file ARGV.join
+

@@ -98,15 +98,21 @@ void ol_song_parse_theme(OLSong *song,xmlDocPtr doc,xmlNodePtr node)
 
 void ol_song_parse_lines(OLSong *song,xmlDocPtr doc,xmlNodePtr linesnode,OLVerse *verse)
 {
+  xmlChar *part=xmlGetProp(linesnode,"part");
+  xmlChar *lang=xmlGetProp(linesnode,"lang");
   xmlNodePtr node = linesnode->xmlChildrenNode;
+
   while (node)
   {
     if (seql(node->name,"line"))
     {
-      
+        xmlChar *text=xmlNodeListGetString(doc,node->xmlChildrenNode,1);
+        ol_verse_add_line(verse, text, part, lang);       
+        free(text);
     }
     node = node->next;
   }
+  free(part);free(lang);
 }
 
 void ol_song_parse_string(OLSong *song,xmlDocPtr doc,xmlNodePtr node,ol_string_parser func)
@@ -215,7 +221,7 @@ OL_ERROR ol_song_parse_from_file(OLSong *song,const char *uri)
             node=node->next;
           }          
         }
-        /*else if (seql(topnode->name,"lyrics"))
+        else if (seql(topnode->name,"lyrics"))
         {
           xmlNodePtr node=topnode->xmlChildrenNode;
           while (node)
@@ -223,9 +229,11 @@ OL_ERROR ol_song_parse_from_file(OLSong *song,const char *uri)
             if (seql(node->name,"verse"))
             {
               char *name = xmlGetProp(node,"name"), *lang = xmlGetProp(node,"lang");
-              OLVerse *verse = ol_verse_new(name,lang);
+              int index = ol_song_add_verse(song,name,lang);
               free(name);free(lang);
               
+              OLVerse *verse = ol_song_get_verse_at(song,index);             
+          
               xmlNodePtr linenode = node->xmlChildrenNode;
               while (linenode)
               {
@@ -236,7 +244,7 @@ OL_ERROR ol_song_parse_from_file(OLSong *song,const char *uri)
             }
             node=node->next;
           }          
-        }*/
+        }
         topnode=topnode->next;
       }    
     }

@@ -8,10 +8,12 @@
 
 VALUE ol_mod = Qnil, ol_mod_error = Qnil, ol_class_song = Qnil, ol_class_data = Qnil;
 VALUE ol_class_author = Qnil, ol_class_title = Qnil, ol_class_songbook = Qnil, ol_class_theme = Qnil;
+VALUE ol_class_line, ol_class_verse = Qnil;
 
 OL_ERROR ol_curr_error = OL_ERROR_NONE;
 
 VALUE rb_ol_get_error(VALUE self) { return INT2NUM(ol_curr_error); }
+VALUE rb_ol_get_error_str(VALUE self) { return RB_OL_STR_NEW(ol_error_str(ol_curr_error)); }
 
 VALUE rb_ol_data_get_name(VALUE self)
 {
@@ -54,6 +56,38 @@ VALUE rb_ol_new_theme(VALUE self) { return rb_ol_make_theme(ol_theme_new(NULL,0,
 
 VALUE rb_ol_make_songbook(OLSongbook *songbook) { return (VALUE)Data_Wrap_Struct(ol_class_songbook,0,0,songbook); }
 VALUE rb_ol_new_songbook(VALUE self) { return rb_ol_make_theme(ol_songbook_new(NULL,0,NULL)); }
+
+VALUE rb_ol_make_line(OLLine *line) { return (VALUE)Data_Wrap_Struct(ol_class_line,0,0,line); }
+VALUE rb_ol_new_line(VALUE self) { return rb_ol_make_line(ol_line_new(NULL,NULL,NULL)); }
+
+VALUE rb_ol_make_verse(OLVerse *verse) { return (VALUE)Data_Wrap_Struct(ol_class_verse,0,0,verse); }
+VALUE rb_ol_new_verse(VALUE self) { return rb_ol_make_verse(ol_verse_new(NULL,NULL)); }
+
+VALUE rb_ol_line_get_part(VALUE self)
+{
+	OLLine *line;Data_Get_Struct(self,OLLine,line);
+	return RB_OL_STR_NEW(ol_line_get_part(line));
+}
+VALUE rb_ol_line_set_part(VALUE self, VALUE part)
+{
+	OLLine *line;Data_Get_Struct(self,OLLine,line);
+	ol_line_set_part(line,RSTRING(part)->ptr);
+	return INT2NUM(1);
+}
+
+VALUE rb_ol_verse_get_lines(VALUE self)
+{
+  OLVerse *verse;Data_Get_Struct(self,OLVerse,verse);
+
+	OLLine **lines = ol_verse_get_lines(verse);	
+  VALUE array = rb_ary_new2(ol_verse_num_lines(verse));
+
+  int i;
+  for (i=0;i<ol_verse_num_lines(verse);i=i+1)
+    rb_ary_store(array,i,rb_ol_make_line(ol_line_copy(lines[i])));
+
+  return array;
+}
 
 VALUE rb_ol_song_parse_from_file(VALUE self, VALUE uri)
 {
@@ -281,6 +315,20 @@ VALUE rb_ol_song_get_themes(VALUE self)
   return array;
 }
 
+VALUE rb_ol_song_get_verses(VALUE self)
+{
+  OLSong *song;Data_Get_Struct(self,OLSong,song);
+	
+	OLVerse **verses = ol_song_get_verses(song);	
+  VALUE array = rb_ary_new2(ol_song_num_verses(song));
+  
+  int i;
+  for (i=0;i<ol_song_num_verses(song);i=i+1)
+    rb_ary_store(array,i,rb_ol_make_verse(ol_verse_copy(verses[i])));
+  
+  return array;
+}
+
 /*
 VALUE rb_ol_song_get_string(VALUE self)
 {
@@ -317,6 +365,7 @@ void Init_openlyrics() {
   rb_define_const(ol_mod_error,"Root", 		INT2NUM(OL_ERROR_ROOT));
   rb_define_const(ol_mod_error,"Version",	INT2NUM(OL_ERROR_VERSION));
   rb_define_module_function(ol_mod_error,"get",rb_ol_get_error,0);
+  rb_define_module_function(ol_mod_error,"get_s",rb_ol_get_error_str,0);
   
   ol_class_data = rb_define_class_under(ol_mod, "Data", rb_cObject);
 	rb_define_method(ol_class_data,"name",  rb_ol_data_get_name, 0);
@@ -341,6 +390,15 @@ void Init_openlyrics() {
 	
 	ol_class_theme = rb_define_class_under(ol_mod, "Theme",  ol_class_data);
 	rb_define_alloc_func(ol_class_theme, rb_ol_new_theme);
+	
+	ol_class_line = rb_define_class_under(ol_mod, "Line",  ol_class_data);
+	rb_define_alloc_func(ol_class_line, rb_ol_new_line);
+  rb_define_method(ol_class_line,"part",  rb_ol_line_get_part, 0);
+  rb_define_method(ol_class_line,"part=", rb_ol_line_set_part, 1);
+	
+	ol_class_verse = rb_define_class_under(ol_mod, "Verse",  ol_class_data);
+	rb_define_alloc_func(ol_class_verse, rb_ol_new_verse);
+	rb_define_method(ol_class_verse,"lines", rb_ol_verse_get_lines, 0);
 	
 	ol_class_song = rb_define_class_under(ol_mod, "Song", rb_cObject);
 	rb_define_alloc_func(ol_class_song, rb_ol_new_song);
@@ -372,6 +430,7 @@ void Init_openlyrics() {
 	rb_define_method(ol_class_song,"keywords",        rb_ol_song_get_keywords,       0);
 	rb_define_method(ol_class_song,"songbooks",       rb_ol_song_get_songbooks,      0);
 	rb_define_method(ol_class_song,"themes",          rb_ol_song_get_themes,         0);
+	rb_define_method(ol_class_song,"verses",          rb_ol_song_get_verses,         0);
 
 	rb_global_variable(ol_mod);
 	rb_global_variable(ol_mod_error);

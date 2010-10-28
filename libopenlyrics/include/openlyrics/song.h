@@ -129,4 +129,13 @@ OLTheme **ol_song_get_themes (OLSong *song);
 void ol_song_get_theme	(OLSong *song, int index, char **name, int *id, char **lang);
 void ol_song_add_theme	(OLSong *song, const char *name, int id, const char *lang);
 
+int ol_song_num_verses (OLSong *song);
+int ol_song_add_verse (OLSong *song, const char *name, const char *lang);
+OLVerse **ol_song_get_verses(OLSong *song);
+void ol_song_get_verse (OLSong *song, int index, char **name, char **lang);
+OLVerse *ol_song_get_verse_at(OLSong *song, int index);
+int ol_song_verse_num_lines (OLSong *song, int index);
+void ol_song_verse_add_line (OLSong *song, int index, const char *text, const char *part, const char *lang);
+void ol_song_verse_get_line (OLSong *song, int verse_index, int index, char **text, char **part, char **lang);
+
 #endif

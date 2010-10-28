@@ -86,18 +86,22 @@ OLTheme *ol_theme_copy (OLTheme *theme);
 void     ol_theme_get  (OLTheme *theme, char **name, int *id, char **lang);
 void     ol_theme_set  (OLTheme *theme, const char *name, int id, const char *lang);
 
-OLLine *ol_line_new  (const char *name, const char *part, const char *lang);
-void    ol_line_free (OLLine *line);
-OLLine *ol_line_copy (OLLine *line);
-void    ol_line_get  (OLLine *line, char **name, char **part, char **lang);
-void    ol_line_set  (OLLine *line, const char *name, const char *part, const char *lang);
+OLLine     *ol_line_new  (const char *name, const char *part, const char *lang);
+void        ol_line_free (OLLine *line);
+OLLine     *ol_line_copy (OLLine *line);
+void        ol_line_get  (OLLine *line, char **name, char **part, char **lang);
+void        ol_line_set  (OLLine *line, const char *name, const char *part, const char *lang);
+const char *ol_line_get_part (OLLine *line);
+void        ol_line_set_part (OLLine *line, const char *part);
 
 OLVerse *ol_verse_new  (const char *name, const char *lang);
 void     ol_verse_free (OLVerse *verse);
 OLVerse *ol_verse_copy (OLVerse *verse);
+void     ol_verse_get  (OLVerse *verse, char **name, char **lang);
 int      ol_verse_num_lines (OLVerse *verse);
 OLLine **ol_verse_get_lines (OLVerse *verse);
+OLLine  *ol_verse_get_line_ptr (OLVerse *verse, int index);
 void ol_verse_get_line(OLVerse *verse, int index, char **name, char **part, char **lang);
-void ol_verse_add_line (OLVerse *verse, int index, const char *name, const char *part, const char *lang);
+void ol_verse_add_line (OLVerse *verse, const char *name, const char *part, const char *lang);
 
 #endif

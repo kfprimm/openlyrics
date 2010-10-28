@@ -103,8 +103,10 @@ void    ol_line_get  (OLLine *line, char **name, char **part, char **lang)
 void    ol_line_set  (OLLine *line, const char *name, const char *part, const char *lang)
 {
   ol_data_set((OLData*)line, name, lang);
-  ol_string_set(&line->part, part);
+  ol_line_set_part(line, part);
 }
+const char *ol_line_get_part (OLLine *line) { return line->part; }
+void        ol_line_set_part (OLLine *line, const char *part) { ol_string_set(&line->part, part); }
 
 OLVerse *ol_verse_new  (const char *name, const char *lang)
 {
@@ -122,12 +124,14 @@ OLVerse *ol_verse_copy      (OLVerse *verse)
 {
   OLVerse *new_verse = ol_verse_new(verse->name, verse->lang);
   new_verse->lines = ol_array_copy(verse->lines,ol_verse_num_lines(verse),ol_line_copy);
+  new_verse->num_lines = ol_verse_num_lines(verse);
   return new_verse;
 }
+void     ol_verse_get  (OLVerse *verse, char **name, char **lang) { ol_data_get(verse, name, lang); }
 int      ol_verse_num_lines (OLVerse *verse) { return verse->num_lines; }
 OLLine **ol_verse_get_lines (OLVerse *verse) { return verse->lines; }
 void ol_verse_get_line      (OLVerse *verse, int index, char **name, char **part, char **lang) { ol_line_get(verse->lines[index], name, part, lang); }
-void ol_verse_add_line (OLVerse *verse, int index, const char *name, const char *part, const char *lang)
- { ol_array_add_elem((void**)&verse->lines,&verse->num_lines,ol_line_new(name, part, lang)); }
+void ol_verse_add_line (OLVerse *verse, const char *name, const char *part, const char *lang)
+ { ol_array_add_elem((OLArray*)&verse->lines,&verse->num_lines,ol_line_new(name, part, lang)); }
 
 

@@ -4,32 +4,41 @@
 #include <openlyrics/parse.h>
 #include <openlyrics/song.h>
 
-typedef void (*list_func)(OLSong*,int);
+#define seql(s0,s1) (!strcmp((s0),(s1)))
+
+typedef void (*list_func)(OLSong*,int,int);
+
+void print_whitespace(int size)
+{
+  int j;
+  for (j=0;j<size;j=j+1)
+    printf(" ");
+}
 
 void list_items(OLSong *song,const char *heading,int count,list_func func)
 {
   printf(heading);
-  int i,j;
+  int heading_size = strlen(heading);
+  int i;
   for (i=0;i<count;i=i+1)
   {
     if (i>0)
-      for (j=0;j<strlen(heading);j=j+1)
-        printf(" ");
-    func(song,i);
+      print_whitespace(heading_size);
+    func(song,i,heading_size);
     printf("\n");
   }
   if (count==0)
     printf("\n");
 }
 
-void list_titles(OLSong *song,int index)
+void list_titles(OLSong *song,int index, int heading)
 {
   char *title, *lang;
   ol_song_get_title(song,index,&title,&lang);
   printf(title);
 }
 
-void list_authors(OLSong *song,int index)
+void list_authors(OLSong *song,int index, int heading)
 {
   char *name, *lang;
   OL_AUTHOR_TYPE type;
@@ -37,7 +46,7 @@ void list_authors(OLSong *song,int index)
   printf(name);
 }
 
-void list_songbooks(OLSong *song,int index)
+void list_songbooks(OLSong *song,int index, int heading)
 {
   char *name, *entry, *lang;
   ol_song_get_songbook(song,index,&name,&entry,&lang);
@@ -47,7 +56,7 @@ void list_songbooks(OLSong *song,int index)
     printf(name);
 }
 
-void list_themes(OLSong *song,int index)
+void list_themes(OLSong *song,int index, int heading)
 {
   char *name, *lang;
   int id;
@@ -55,9 +64,37 @@ void list_themes(OLSong *song,int index)
   printf("%s (%i)",name,id);
 }
 
-void list_keywords(OLSong *song,int index)
+void list_keywords(OLSong *song,int index, int heading)
 {
   printf(ol_song_get_keyword(song,index));
+}
+
+void list_verses(OLSong *song,int index, int heading)
+{
+  char *name, *lang;
+  OLVerse *verse = ol_song_get_verse_at(song,index);
+  ol_verse_get(verse,&name,&lang);
+  
+  printf("%s",name);
+  int i;
+  for (i=0;i<ol_verse_num_lines(verse);i+=1)
+  {
+    char *line, *part;
+    ol_verse_get_line(verse,i,&line,&part,&lang);
+
+    if (part==NULL)
+      part = "NON";
+    else if (seql(part,"men"))
+      part = "MEN";
+    else if (seql(part,"women"))
+      part = "WMN";
+    else
+      part = "NON";
+    
+    printf("\n");
+    print_whitespace(heading);
+    printf("  (%s) %s",part,line); 
+  }  
 }
 
 int main(int argc, char *argv[])
@@ -90,6 +127,8 @@ int main(int argc, char *argv[])
   
     list_items(song,"Songbook(s):      ",ol_song_num_songbooks(song),list_songbooks);
     list_items(song,"Themes(s):        ",ol_song_num_themes(song),list_themes);
+    
+    list_items(song,"Verse(s):        ",ol_song_num_verses(song),list_verses);
   }
   else
     printf("ERROR: %s\n",ol_error_str(err));
